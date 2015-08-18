@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for
-from flash import render_template
+from flask import render_template
 import os, wolframalpha, re
 
 
