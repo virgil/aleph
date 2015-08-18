@@ -1,0 +1,24 @@
+<html>
+<head>
+	<link href="/static/js/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="body">
+
+	<body>
+		<h3>{{ title }}</h3>
+		{% for p in paragraph %}
+		<p>{{ p }}</p>
+		{% endfor %}
+
+
+		{% if pageType == 'about' %}
+		<p>This is the about page</p>
+		{% else %}
+		<p>not the about page</p>
+		{% endif %}
+	</body>
+
+</body>
+
+</html>
