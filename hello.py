@@ -12,7 +12,7 @@ def landing():
     paragraph = ["wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!","wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!"]
 
     try:
-        return render_template("index.html", title=title, paragraph=paragraph)
+        return render_template("test.html", title=title, paragraph=paragraph)
     except Exception, e:
         return str(e)
 
@@ -26,7 +26,7 @@ def why_page():
 
     pageType = 'about'
 
-    return render_template("index.html", title=title, paragraph=paragraph, pageType=pageType)
+    return render_template("test.html", title=title, paragraph=paragraph, pageType=pageType)
 
 
 @app.route('/random')
