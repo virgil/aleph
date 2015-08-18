@@ -7,11 +7,26 @@ app = Flask(__name__)
 
 @app.route('/')
 def landing():
-    return 'This is the landing page!'
+
+    title = "THE LANDING PAGE"
+    paragraph = ["wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!","wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!"]
+
+    try:
+        return render_template("index.html", title=title, paragraph=paragraph)
+    except Exception, e:
+        return str(e)
+
 
 @app.route('/why')
 def why_page():
-	return "This page exists because people should stop talking about how big the deep web / dark web is."
+
+
+    title = "Why this site exists"
+    paragraph = ["This page exists because people should stop talking about how big the deep web / dark web is."]
+
+    pageType = 'about'
+
+    return render_template("index.html", title=title, paragraph=paragraph, pageType=pageType)
 
 
 @app.route('/random')
@@ -67,5 +82,5 @@ def redirect_path2num(junk):
 
 
 if __name__ == '__main__':
-    app.run(host='128.199.143.78', debug=True)
+    app.run(host='128.199.143.78', passthrough_errors=True, debug=True)
 
