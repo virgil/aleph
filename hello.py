@@ -1,18 +1,13 @@
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, url_for
+#from flash import render_template
 import os, wolframalpha, re
-
-notnumber_pattern = re.compile(r'[^0-9]')
 
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return 'This is the landing page with zero!'
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
+def landing():
+    return 'This is the landing page!'
 
 @app.route('/why')
 def why_page():
@@ -20,7 +15,7 @@ def why_page():
 
 
 @app.route('/random')
-def why_page():
+def redirect_random():
 	return "This page selects a random /number page from the cache."
 
 @app.route('/wolfram')
@@ -39,20 +34,38 @@ def wolfram():
 @app.route('/<int:num>')
 def page(num):
     # show the post with the given id, the id is an integer
-    if num < 0:
-    	return "Naturals numbers only!"
 
     return 'This is the page for the glorious natural number: %d' % num
 
 
+
+
+#########################################################################################################
+## REDIRECTION PAGES BEYOND THIS POINT
+#########################################################################################################
 ## This is for doing redirection for unknown paths
+@app.route('/<float:num>')
+def redirect_float2num(num):
+	# redirect to the integer page
+	return redirect( url_for('page', num=int(round(num))), 301 )
+
+
 @app.route('/<path:junk>')
-def redirect_url(junk):
-	global notnumber_pattern
-	junk = re.sub( notnumber_pattern, '', junk )
+def redirect_path2num(junk):
+
+	junk = re.sub( r'[^0-9]', '', junk )
+
+	# if it's a digit, redirect to the number page.
+	if junk.isdigit():
+		return redirect( url_for('page', num=int(junk) ), 301 )
+
+	# else, redirect to the frontpage
+	return redirect( url_for('landing'), 301 )
 	
-	# if junk exists, make it an int (to remove initial 0s, else make it a zero)
-	junk = int(junk) if junk else ''
 	
-	redirect('/%s' % junk, 302)
+	
+
+
+if __name__ == '__main__':
+    app.run(host='128.199.143.78', debug=True)
 
