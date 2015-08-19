@@ -1,25 +1,47 @@
 <html>
 <head>
-	<link href="/static/js/bootstrap.min.css" rel="stylesheet">
-	<title>&alefsym;₀ :: {{num}} :: Where the infinite is possible.</title>
+	<link href="/static/css/bootstrap.css" rel="stylesheet">
+	<title>&alefsym;₀ :: {{num}}</title>
 </head>
 
 <body class="body">
-<div class="page-header"><h1 id="navbar">Navbar</h1></div>
+<div class="page-header"><h3 id="navbar"><b>Aleph zed :: Essential ℕatural ℕumber Facts</b></h3></div>
 
         
-	<h3>{{ num }}</h3>
-	{% for p in paragraph %}
-	       <p>{{ p }}</p>
-	{% endfor %}
+	<h1 id="huge">{{ num }}</h1>
+        <div style="margin-left: 200px; display: block;">        
+                <!-- <h3><b>Essential Facts</b></h3> -->
 
-        {% if before >= 0 %}
-        	<li class="next"><a href="/{{before}}">{{before}} ⟵</a></li>
+                <ul class="fact">
+        	{% for p in paragraph %}
+	               <li class="fact">{{ p[0] }}<span class="helper"> </span>{{ p[1] | safe }}</li>
+	        {% endfor %}
+                </ul>
+        </div>
+
+
+        <div align="center">
+              <ul class="pagination pagination-lg">
+
+        {% if (num-10) <= 0 %}
+                <li class="disabled"><a href="/">⬤</a></li>
+        {% else %}
+                <li><a href="/{{num-10}}">⟸ —10</a></li>        
         {% endif %}
 
-        <li class="next"><a href="/random">Random</a></li>
-        <li class="next"><a href="/{{after}}">⟶{{after}}</a></li>
+        {% if (num-1) == 0 %}
+                <li class="disabled"><a href="/">⬤</a></li>
+        {% else %}
+                <li><a href="/{{num-1}}">⟵ &ndash;1</a></li>
+        {% endif %}
 
+                <li><a href="/random">⇜?⇝</a></li>
+                <li><a href="/{{num+1}}">+1 ⟶</a></li>
+                <li><a href="/{{num+10}}">+10 ⟹</a></li>
+
+              </ul>
+        </div>
+        <div align="center">&alefsym;₀ :: <i>where the infinite is possible</i> :: &alefsym;₀</div>
 </body>
 
 </html>

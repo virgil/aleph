@@ -1,6 +1,9 @@
 from flask import Flask, redirect, url_for
 from flask import render_template
-import os, wolframalpha, re
+from flask import Markup
+import os, re, json
+import wolframalpha
+
 
 
 app = Flask(__name__)
@@ -39,37 +42,62 @@ def why_page():
 def redirect_random():
 	return "This page selects a random /number page from the cache."
 
-@app.route('/wolfram')
-def wolfram():
-
-	app_id = 'E7W676-QR2UE4PUR4'
-	client = wolframalpha.Client(app_id)
-	res = client.query('temperature in Washington, DC on October 3, 2012')
-
-	stuff = []
-	for r in res.results:
-		stuff.append( r.text )
-	return '<br>'.join(stuff)
-
 
 @app.route('/<int:num>')
 def page(num):
     # show the post with the given id, the id is an integer
+	
+	# make the connection to the backend    
+	app_id = 'E7W676-QR2UE4PUR4'
+	params = { 'scanner': 'Integer', 'assumption': '*C.1337-_*NonNegativeDecimalInteger-' }
+	client = wolframalpha.Client(app_id)
+	
+
+	res = client.query( str(num) )
+	lines = []
+	the_pods = [ pod for pod in res.pods ]
+
+	for pod in the_pods:
+		if pod.id == 'Property':
+			for s in pod:
+				if 'img' in s.children:
+					lines.append( ('', img2html(s.children['img']) ) )
+
+				elif 'plaintext' in s.children:
+					lines.append( ('', s.text) )
+
+
+	for pod in the_pods:
+		if pod.id == 'BaseConversions':
+			for s in pod:
+				if 'img' in s.children:
+					lines.append( ("Base conversion: %s = " % num, img2html(s.children['img'])) )
+
+				elif 'plaintext' in s.children:
+					lines.append( ("Base conversion: %s = " % num, s.text) )
+
+
+		elif pod.id == 'PrimeFactorization':
+			for s in pod:
+				if 'img' in s.children:
+					lines.append( ("Prime factors: ", img2html(s.children['img'])) )
+
+				elif 'plaintext' in s.children:
+					lines.append( ("Prime factors: ", s.text) )
+
+	if num == 1:
+		lines.append( ('',"1 is the most solipistic number.") )
+
+	pageType = 'about'
+
+	return render_template( "numpage.html", num=int(num), paragraph=lines )
     
-    title = str(num)
-    before, after = max(0,num-1), num+1
 
-    lines = ['Lorem ipsum dolor sit amet, ea commodo consequat.', 
-    'consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et ',
-    'dolore magna aliqua. Ut enim ad minim veniam',
-    'quis nostrud exercitation ullamco laboris nisi ut aliquip ex' ]
+def img2html( imgdict ):
+	'''returns the HTML from img dictionary'''
 
-    pageType = 'about'
-
-    return render_template( "numpage.html", num=num, before=before, after=after, paragraph=lines )
-    
-
-
+	z = '<img src="%(src)s" alt="%(alt)s" title="%(title)s" height="%(height)s" width="%(width)s"/>' % imgdict
+	return z
 
 
 #########################################################################################################
