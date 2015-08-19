@@ -8,8 +8,14 @@ app = Flask(__name__)
 @app.route('/')
 def landing():
 
-    title = "THE LANDING PAGE"
+    title = ""
+
+    # intro text here
+    intro_paragraphs = [ ]    
     paragraph = ["wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!","wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!"]
+
+
+    # add code here for displaying zero
 
     try:
         return render_template("test.html", title=title, paragraph=paragraph)
@@ -49,8 +55,19 @@ def wolfram():
 @app.route('/<int:num>')
 def page(num):
     # show the post with the given id, the id is an integer
+    
+    title = str(num)
+    before, after = max(0,num-1), num+1
 
-    return 'This is the page for the glorious natural number: %d' % num
+    lines = ['Lorem ipsum dolor sit amet, ea commodo consequat.', 
+    'consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et ',
+    'dolore magna aliqua. Ut enim ad minim veniam',
+    'quis nostrud exercitation ullamco laboris nisi ut aliquip ex' ]
+
+    pageType = 'about'
+
+    return render_template( "numpage.html", num=num, before=before, after=after, paragraph=lines )
+    
 
 
 
@@ -83,4 +100,5 @@ def redirect_path2num(junk):
 
 if __name__ == '__main__':
     app.run(host='128.199.143.78', passthrough_errors=True, debug=True)
+
 
