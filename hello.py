@@ -1,12 +1,14 @@
-from flask import Flask, redirect, url_for
-from flask import render_template
-from flask import Markup
+from flask import Flask, redirect, url_for, render_template
 import os, re, json
-import wolframalpha
-
-
+import wolframalpha, md5, random
+#from flask.ext.mysql import MySQL
 
 app = Flask(__name__)
+
+# MySQL configurations
+md5.new('0').hexdigest()
+
+h = lambda x: md5.new(str(x)).hexdigest()
 
 @app.route('/')
 def landing():
@@ -26,27 +28,56 @@ def landing():
         return str(e)
 
 
-@app.route('/why')
-def why_page():
 
 
-    title = "Why this site exists"
-    paragraph = ["This page exists because people should stop talking about how big the deep web / dark web is."]
-
-    pageType = 'about'
-
-    return render_template("test.html", title=title, paragraph=paragraph, pageType=pageType)
-
+ 
 
 @app.route('/random')
 def redirect_random():
-	return "This page selects a random /number page from the cache."
+	# pick a random integer between [0,99999999], and redirect there
+
+	the_int = random.randint(0,99999999)
+	return redirect( url_for('page', num=the_int), 302 )
 
 
-@app.route('/<int:num>')
-def page(num):
-    # show the post with the given id, the id is an integer
+def get_lines_from_db(num):
+	'''gets all lines about num from mysql database'''
+
+
+	my_hash = h(num)
+	fname = 'db/%s/%s/%s.json' % (my_hash[0], my_hash[1], my_hash)
+
+	# if the directory doesn't exist, make it
+	if not os.path.isfile( fname ):
+		return None
+
+
+	with open(fname, 'r') as f:
+		return json.load(f)
+
+	return None
+
+
+def write_lines_to_db( num, lines ):
+	'''write these lines into the database overwriting any previous num'''
+
+	my_hash = h(num)
+	dname = 'db/%s/%s' % (my_hash[0], my_hash[1])
+
+	# if the directory doesn't exist, make it
+	if not os.path.exists(dname):
+		os.makedirs( dname )
+
+	fname = '%s/%s.json' % (dname, my_hash)
+    # now write it
+	with open(fname,'w') as f:
+		json.dump(lines, f, sort_keys=True)
+
 	
+
+def get_lines_from_wolfram( num ):
+	'''get all of the lines about num from wolframalpha'''
+
 	# make the connection to the backend    
 	app_id = 'E7W676-QR2UE4PUR4'
 	params = { 'scanner': 'Integer', 'assumption': '*C.1337-_*NonNegativeDecimalInteger-' }
@@ -86,9 +117,29 @@ def page(num):
 					lines.append( ("Prime factors: ", s.text) )
 
 	if num == 1:
+		lines.append( ('',"1 is NOT prime.  Nor is it composite.") )
 		lines.append( ('',"1 is the most solipistic number.") )
 
-	pageType = 'about'
+	elif num == 0:
+		lines.append( 'By definition: ', '0! = 1')
+
+	return lines	
+
+@app.route('/<int:num>')
+def page(num):
+    # show the post with the given id, the id is an integer
+    
+	lines = get_lines_from_db(num)
+
+	# if no dblines, try 
+	if not lines:
+		lines = get_lines_from_wolfram(num)
+
+		# we got some lines, awesome.
+		if lines:
+			write_lines_to_db(num,lines)
+		else:
+			lines = ["We don't know anything about %d yet!  We will soon!" % num]
 
 	return render_template( "numpage.html", num=int(num), paragraph=lines )
     
