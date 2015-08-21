@@ -4,13 +4,14 @@
 	<title>&alefsym;₀ :: {{num}}</title>
 </head>
 
+<!-- hash: {{h}} -->
 <body class="body">
-<div class="page-header"><h3 id="navbar"><b>Aleph zed :: Essential ℕatural ℕumber Facts</b></h3></div>
+<div class="page-header"><h3 id="navbar"><b>Aleph naught :: Essential ℕatural ℕumber Facts</b></h3></div>
 
-        
+    
 	<h1 id="huge">{{ num }}</h1>
         <div style="margin-left: 200px; display: block;">        
-                <!-- <h3><b>Essential Facts</b></h3> -->
+                
 
                 <ul class="fact">
         	   {% for p in paragraph %}
@@ -23,13 +24,13 @@
         <div align="center">
               <ul class="pagination pagination-lg">
 
-        {% if (num-10) <= 0 %}
+        {% if num < 10 %}
                 <li class="disabled"><a href="/">⬤</a></li>
         {% else %}
                 <li><a href="/{{num-10}}">⟸ —10</a></li>        
         {% endif %}
 
-        {% if (num-1) == 0 %}
+        {% if num == 0 %}
                 <li class="disabled"><a href="/">⬤</a></li>
         {% else %}
                 <li><a href="/{{num-1}}">⟵ &ndash;1</a></li>

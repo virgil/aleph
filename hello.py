@@ -11,19 +11,11 @@ md5.new('0').hexdigest()
 h = lambda x: md5.new(str(x)).hexdigest()
 
 @app.route('/')
+@app.route('/about')
 def landing():
 
-    title = ""
-
-    # intro text here
-    intro_paragraphs = [ ]    
-    paragraph = ["wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!","wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!wow I am learning so much great stuff!"]
-
-
-    # add code here for displaying zero
-
     try:
-        return render_template("test.html", title=title, paragraph=paragraph)
+        return render_template("index.html")
     except Exception, e:
         return str(e)
 
@@ -141,7 +133,7 @@ def page(num):
 		else:
 			lines = ["We don't know anything about %d yet!  We will soon!" % num]
 
-	return render_template( "numpage.html", num=int(num), paragraph=lines )
+	return render_template( "numpage.html", num=int(num), paragraph=lines, h=h(num) )
     
 
 def img2html( imgdict ):
