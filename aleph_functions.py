@@ -150,6 +150,8 @@ def get_lines_from_wolfram( num ):
 	elif num == 0:
 		lines.append( ('By definition: ', '0! = 1') )
 		lines.append( ('', "There remains some debate as to when zero was discovered.  But most recent science put the origin in Cambodia around 680 Common Era.") )
+		lines.append( ('', "0<sup>0</sup> = 1") )
+		lines.append( ('', 'In Roman numerals, 0 is "nulla".') )
 
 	return lines
 

@@ -81,6 +81,6 @@ def redirect_path2num(junk):
 
 
 if __name__ == '__main__':
-    app.run(host='128.199.143.78', passthrough_errors=True, debug=True)
+    app.run(host='128.199.143.78', port=80, passthrough_errors=True)
 
 
