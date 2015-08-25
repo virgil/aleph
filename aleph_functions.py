@@ -1,3 +1,10 @@
+import wolframalpha, md5
+import os, json, urllib
+from urlparse import urlparse
+
+h = lambda x: md5.new(str(x)).hexdigest()
+
+
 def num2path( num ):
 	'''takes the num, returns the database path'''
 
@@ -87,7 +94,7 @@ def get_lines_from_wolfram( num ):
 	
 
 	res = client.query( str(num) )
-	lines = [ ('', 'Getting from wolfram...') ]
+	lines = []
 
 	the_pods = [ pod for pod in res.pods ]
 
@@ -100,7 +107,7 @@ def get_lines_from_wolfram( num ):
 
 					local_img = wolframdict2localdict( s.children['img'], num )
 
-					lines.append( ((''), 'dict=%s' % local_img) )					
+					#lines.append( ((''), 'dict=%s' % local_img) )					
 
 					# this might come back False					
 					if local_img:
@@ -118,7 +125,7 @@ def get_lines_from_wolfram( num ):
 
 					# this might come back False
 					if local_img:
-						lines.append( ("Base conversion: %s = " % num, img2html(local_img)) )
+						lines.append( ("Binary conversion: %s = " % num, img2html(local_img)) )
 
 				elif 'plaintext' in s.children:
 					lines.append( ("Base conversion: %s = " % num, s.text) )
@@ -141,78 +148,11 @@ def get_lines_from_wolfram( num ):
 		lines.append( ('',"1 is the most solipistic number.") )
 
 	elif num == 0:
-		lines.append( 'By definition: ', '0! = 1')
+		lines.append( ('By definition: ', '0! = 1') )
+		lines.append( ('', "There remains some debate as to when zero was discovered.  But most recent science put the origin in Cambodia around 680 Common Era.") )
 
 	return lines
 
-
-def get_lines_from_wolfram( num ):
-	'''get all of the lines about num from wolframalpha'''
-
-	# make the connection to the backend    
-	app_id = 'E7W676-QR2UE4PUR4'
-	params = { 'scanner': 'Integer', 'assumption': '*C.1337-_*NonNegativeDecimalInteger-' }
-	client = wolframalpha.Client(app_id)
-	
-
-	res = client.query( str(num) )
-	lines = [ ('', 'Getting from wolfram...') ]
-
-	the_pods = [ pod for pod in res.pods ]
-
-	for pod in the_pods:
-		if pod.id == 'Property':
-			for s in pod:
-				if 'img' in s.children:
-					#lines.append( ('', 'adding stuff to dict' ) )
-					#lines.append( ((''), 'dict=%s' % s.children['img']) )
-
-					local_img = wolframdict2localdict( s.children['img'], num )
-
-					lines.append( ((''), 'dict=%s' % local_img) )					
-
-					# this might come back False					
-					if local_img:
-						lines.append( ('', img2html(local_img) ) )
-
-				elif 'plaintext' in s.children:
-					lines.append( ('', s.text) )
-
-	
-	for pod in the_pods:
-		if pod.id == 'BaseConversions':
-			for s in pod:
-				if 'img' in s.children:
-					local_img = wolframdict2localdict( s.children['img'], num )
-
-					# this might come back False
-					if local_img:
-						lines.append( ("Base conversion: %s = " % num, img2html(local_img)) )
-
-				elif 'plaintext' in s.children:
-					lines.append( ("Base conversion: %s = " % num, s.text) )
-
-
-		elif pod.id == 'PrimeFactorization':
-			for s in pod:
-				if 'img' in s.children:
-					local_img = wolframdict2localdict( s.children['img'], num )
-
-					# this might come back False
-					if local_img:
-						lines.append( ("Prime factors: ", img2html(local_img)) )
-
-				elif 'plaintext' in s.children:
-					lines.append( ("Prime factors: ", s.text) )
-
-	if num == 1:
-		lines.append( ('',"1 is NOT prime.  Nor is it composite.") )
-		lines.append( ('',"1 is the most solipistic number.") )
-
-	elif num == 0:
-		lines.append( 'By definition: ', '0! = 1')
-
-	return lines
 
 def get_lines_from_db(num):
 	'''gets all lines about num from mysql database'''

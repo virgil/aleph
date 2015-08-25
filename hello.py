@@ -1,10 +1,8 @@
-from flask import Flask, redirect, url_for, render_template
-import os, re, json, urllib
-import wolframalpha, md5, random
-from urlparse import urlparse
+from flask import Flask, redirect, url_for, render_template, send_from_directory
+import re, random
 from aleph_functions import *
 
-h = lambda x: md5.new(str(x)).hexdigest()
+
 #######################################################
 
 app = Flask(__name__)
@@ -58,6 +56,12 @@ def page(num):
 def redirect_float2num(num):
 	# redirect to the integer page
 	return redirect( url_for('page', num=int(round(num))), 301 )
+
+
+
+@app.route('/db/<path:filename>')
+def db_static(filename):
+    return send_from_directory(app.root_path + '/db/', filename)
 
 
 @app.route('/<path:junk>')
