@@ -45,6 +45,7 @@ def page(num):
 		else:
 			lines = [ ('' ,"We don't know anything about %d yet!  We will soon!" % num ) ]
 
+
 	return render_template( "numpage.html", num=int(num), paragraph=lines, h=h(num) )
 
 
@@ -67,17 +68,26 @@ def db_static(filename):
 @app.route('/<path:junk>')
 def redirect_path2num(junk):
 
-	junk = re.sub( r'[^0-9]', '', junk )
+	z = ''
+	# if this junk only contains math...
+	if re.match( r'^[0-9\+\-*\\\^)(\ ]*$', junk):
 
-	# if it's a digit, redirect to the number page.
-	if junk.isdigit():
-		return redirect( url_for('page', num=int(junk) ), 301 )
+		z = junk.replace('^','**').strip()
+
+		try:
+			z = str(eval(z, {'__builtins__': None}))
+
+		except:
+			z = re.sub( r'[^0-9]', '', z )
+
+		finally:
+#			# if it's a digit, redirect to the number page.
+			if z.isdigit():
+				return redirect( url_for('page', num=int(z) ), 301 )
 
 	# else, redirect to the frontpage
 	return redirect( url_for('landing'), 301 )
-	
-	
-	
+
 
 
 if __name__ == '__main__':

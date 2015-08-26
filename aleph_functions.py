@@ -32,22 +32,6 @@ def next_img_fname(num):
 	return "%s%s" % (dname, next_digit)
 
 
-
-def write_lines_to_db( num, lines ):
-	'''write these lines into the database overwriting any previous num'''
-
-	my_hash, dname = h(num), num2path(num)
-
-	# if the directory doesn't exist, make it
-	if not os.path.exists(dname):
-		os.makedirs( dname )
-
-	fname = '%s/%s.json' % (dname, my_hash)
-    # now write it
-	with open(fname,'w') as f:
-		json.dump(lines, f, sort_keys=True)
-
-
 def get_lines_from_db(num):
 	'''gets all lines about num from mysql database'''
 
@@ -89,23 +73,34 @@ def get_lines_from_wolfram( num ):
 
 	# make the connection to the backend    
 	app_id = 'E7W676-QR2UE4PUR4'
-	params = { 'scanner': 'Integer', 'assumption': '*C.1337-_*NonNegativeDecimalInteger-' }
 	client = wolframalpha.Client(app_id)
 	
 
-	res = client.query( str(num) )
-	lines = []
+	res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
+	#res = client.query( str(num), params )
+	lines = [ ]
 
 	the_pods = [ pod for pod in res.pods ]
 
 	for pod in the_pods:
 		if pod.id == 'Property':
-			for s in pod:
-				if 'img' in s.children:
+
+			for spod in pod:
+
+				# remains of an attempt to make MathML work.  Eventually gave up.  Images it is!
+				if 'mathml' in spod.children:
+					the_math = spod.flatten('mathml/')
+					
+					the_math = the_math.replace('<mtext>','<mspace depth="0.5ex" height="0.5ex" width="1ex"/></mspace><mtext>')
+					the_math = the_math.replace('</mtext>','</mtext><mspace depth="0.5ex" height="0.5ex" width="1ex"></mspace>')
+
+					lines.append( ('', the_math) )
+
+				elif 'img' in spod.children:
 					#lines.append( ('', 'adding stuff to dict' ) )
 					#lines.append( ((''), 'dict=%s' % s.children['img']) )
 
-					local_img = wolframdict2localdict( s.children['img'], num )
+					local_img = wolframdict2localdict( spod.children['img'], num )
 
 					#lines.append( ((''), 'dict=%s' % local_img) )					
 
@@ -113,27 +108,19 @@ def get_lines_from_wolfram( num ):
 					if local_img:
 						lines.append( ('', img2html(local_img) ) )
 
-				elif 'plaintext' in s.children:
-					lines.append( ('', s.text) )
-
-	
-	for pod in the_pods:
-		if pod.id == 'BaseConversions':
-			for s in pod:
-				if 'img' in s.children:
-					local_img = wolframdict2localdict( s.children['img'], num )
-
-					# this might come back False
-					if local_img:
-						lines.append( ("Binary conversion: %s = " % num, img2html(local_img)) )
-
-				elif 'plaintext' in s.children:
-					lines.append( ("Base conversion: %s = " % num, s.text) )
+				elif 'plaintext' in spod.children:
+					lines.append( ('', spod.text) )
 
 
 		elif pod.id == 'PrimeFactorization':
 			for s in pod:
-				if 'img' in s.children:
+
+				if 'mathml' in s.children:
+					lines.append( ('', "Found mathml!") )
+					the_math = spod.flatten('mathml/')
+					lines.append( ('', the_math) )
+
+				elif 'img' in s.children:
 					local_img = wolframdict2localdict( s.children['img'], num )
 
 					# this might come back False
@@ -143,37 +130,26 @@ def get_lines_from_wolfram( num ):
 				elif 'plaintext' in s.children:
 					lines.append( ("Prime factors: ", s.text) )
 
+
 	if num == 1:
 		lines.append( ('',"1 is NOT prime.  Nor is it composite.") )
 		lines.append( ('',"1 is the most solipistic number.") )
 
 	elif num == 0:
-		lines.append( ('By definition: ', '0! = 1') )
+		lines.append( ('By definition: ', '0! = 1.') )
 		lines.append( ('', "There remains some debate as to when zero was discovered.  But most recent science put the origin in Cambodia around 680 Common Era.") )
-		lines.append( ('', "0<sup>0</sup> = 1") )
+		#lines.append( ('By definition: ', "0<sup>0</sup> = 1.") )
 		lines.append( ('', 'In Roman numerals, 0 is "nulla".') )
+
+
+	# print the base conversions
+	base2 = str(bin(num))[2:]
+	lines.append( ('In binary: ', base2) )
+	lines.append( ('In hexadecimal: ', str("%x" % num)) )
 
 	return lines
 
 
-def get_lines_from_db(num):
-	'''gets all lines about num from mysql database'''
-
-
-	my_hash = h(num)
-	dname = num2path(num)
-
-	fname = '%s/%s.json' % (dname, my_hash)
-
-	# if the directory doesn't exist, make it
-	if not os.path.isfile( fname ):
-		return None
-
-
-	with open(fname, 'r') as f:
-		return json.load(f)
-
-	return None
 
 
 def wolframdict2localdict( imgdict, num ):
