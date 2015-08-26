@@ -29,7 +29,10 @@ ul.fact {
 li.fact {
 	vertical-align: middle; 
 	margin-bottom: 15px;
-      }
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;	
+    }
 
 .helper {
       display: inline-block;

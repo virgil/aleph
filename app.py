@@ -3,13 +3,16 @@ import re, random
 from aleph_functions import *
 
 
+regex_mathmatch = re.compile( r'^[0-9\+\-*\\\^)(\ ]*$' )
+regex_nummatch = re.compile( r'[^0-9]' )
+
+
 #######################################################
 
 app = Flask(__name__)
 
 
 @app.route('/')
-@app.route('/about')
 def landing():
 
     try:
@@ -23,7 +26,7 @@ def landing():
 def redirect_random():
 	# pick a random integer between [0,99999999], and redirect there
 
-	the_int = random.randint(0,99999999)
+	the_int = random.randint(0,999999999)
 	return redirect( url_for('page', num=the_int), 302 )
 
 
@@ -69,8 +72,9 @@ def db_static(filename):
 def redirect_path2num(junk):
 
 	z = ''
+
 	# if this junk only contains math...
-	if re.match( r'^[0-9\+\-*\\\^)(\ ]*$', junk):
+	if re.match( regex_mathmatch, junk):
 
 		z = junk.replace('^','**').strip()
 
@@ -78,12 +82,13 @@ def redirect_path2num(junk):
 			z = str(eval(z, {'__builtins__': None}))
 
 		except:
-			z = re.sub( r'[^0-9]', '', z )
+			pass
 
-		finally:
-#			# if it's a digit, redirect to the number page.
-			if z.isdigit():
-				return redirect( url_for('page', num=int(z) ), 301 )
+	# if it's a digit, redirect to the number page.
+	z = re.sub( regex_nummatch, '', z )
+
+	if z.isdigit():
+		return redirect( url_for('page', num=int(z) ), 301 )
 
 	# else, redirect to the frontpage
 	return redirect( url_for('landing'), 301 )

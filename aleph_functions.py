@@ -75,61 +75,65 @@ def get_lines_from_wolfram( num ):
 	app_id = 'E7W676-QR2UE4PUR4'
 	client = wolframalpha.Client(app_id)
 	
+	try:
+		res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
 
-	res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
-	#res = client.query( str(num), params )
-	lines = [ ]
+		#res = client.query( str(num), params )
+		lines = [ ]
 
-	the_pods = [ pod for pod in res.pods ]
+		the_pods = [ pod for pod in res.pods ]
 
-	for pod in the_pods:
-		if pod.id == 'Property':
+		for pod in the_pods:
+			if pod.id == 'Property':
 
-			for spod in pod:
+				for spod in pod:
 
-				# remains of an attempt to make MathML work.  Eventually gave up.  Images it is!
-				if 'mathml' in spod.children:
-					the_math = spod.flatten('mathml/')
-					
-					the_math = the_math.replace('<mtext>','<mspace depth="0.5ex" height="0.5ex" width="1ex"/></mspace><mtext>')
-					the_math = the_math.replace('</mtext>','</mtext><mspace depth="0.5ex" height="0.5ex" width="1ex"></mspace>')
+					# remains of an attempt to make MathML work.  Eventually gave up.  Images it is!
+					if 'mathml' in spod.children:
+						the_math = spod.flatten('mathml/')
+						
+						the_math = the_math.replace('<mtext>','<mspace depth="0.5ex" height="0.5ex" width="1ex"/></mspace><mtext>')
+						the_math = the_math.replace('</mtext>','</mtext><mspace depth="0.5ex" height="0.5ex" width="1ex"></mspace>')
 
-					lines.append( ('', the_math) )
+						lines.append( ('', the_math) )
 
-				elif 'img' in spod.children:
-					#lines.append( ('', 'adding stuff to dict' ) )
-					#lines.append( ((''), 'dict=%s' % s.children['img']) )
+					elif 'img' in spod.children:
+						#lines.append( ('', 'adding stuff to dict' ) )
+						#lines.append( ((''), 'dict=%s' % s.children['img']) )
 
-					local_img = wolframdict2localdict( spod.children['img'], num )
+						local_img = wolframdict2localdict( spod.children['img'], num )
 
-					#lines.append( ((''), 'dict=%s' % local_img) )					
+						#lines.append( ((''), 'dict=%s' % local_img) )					
 
-					# this might come back False					
-					if local_img:
-						lines.append( ('', img2html(local_img) ) )
+						# this might come back False					
+						if local_img:
+							lines.append( ('', img2html(local_img) ) )
 
-				elif 'plaintext' in spod.children:
-					lines.append( ('', spod.text) )
+					elif 'plaintext' in spod.children:
+						lines.append( ('', spod.text) )
 
 
-		elif pod.id == 'PrimeFactorization':
-			for s in pod:
+			elif pod.id == 'PrimeFactorization':
+				for s in pod:
 
-				if 'mathml' in s.children:
-					lines.append( ('', "Found mathml!") )
-					the_math = spod.flatten('mathml/')
-					lines.append( ('', the_math) )
+					if 'mathml' in s.children:
+						lines.append( ('', "Found mathml!") )
+						the_math = spod.flatten('mathml/')
+						lines.append( ('', the_math) )
 
-				elif 'img' in s.children:
-					local_img = wolframdict2localdict( s.children['img'], num )
+					elif 'img' in s.children:
+						local_img = wolframdict2localdict( s.children['img'], num )
 
-					# this might come back False
-					if local_img:
-						lines.append( ("Prime factors: ", img2html(local_img)) )
+						# this might come back False
+						if local_img:
+							lines.append( ("Prime factors: ", img2html(local_img)) )
 
-				elif 'plaintext' in s.children:
-					lines.append( ("Prime factors: ", s.text) )
+					elif 'plaintext' in s.children:
+						lines.append( ("Prime factors: ", s.text) )
 
+	# there was some error getting information from wolfram alpha
+	except:
+		pass
 
 	if num == 1:
 		lines.append( ('',"1 is NOT prime.  Nor is it composite.") )
