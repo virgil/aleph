@@ -1,7 +1,7 @@
-from flask import Flask, redirect, url_for, render_template, send_from_directory
+from flask import Flask, redirect, url_for, render_template, send_from_directory, make_response
 import re, random
 from aleph_functions import *
-
+from functools import wraps
 
 regex_mathmatch = re.compile( r'^[0-9\+\-*\\\^)(\ ]*$' )
 regex_nummatch = re.compile( r'[^0-9]' )
@@ -22,8 +22,31 @@ def landing():
         return str(e)
 
 
+def add_response_headers(headers={}):
+	"""This decorator adds the headers passed in to the response"""
+	def decorator(f):
+		@wraps(f)
+		def decorated_function(*args, **kwargs):
+			resp = make_response(f(*args, **kwargs))
+			h = resp.headers
+			for header, value in headers.items():
+				h[header] = value
+			return resp
+		return decorated_function
+	return decorator
 
+def dontcache(f):
+	"""This decorator prepends Cache-Control: private"""
+	@wraps(f)
+	@add_response_headers({'Cache-Control': 'private'})
+	def decorated_function(*args, **kwargs):
+		return f(*args, **kwargs)
+	return decorated_function
+
+
+@app.route('/rand')
 @app.route('/random')
+@dontcache
 def redirect_random():
 	# pick a random integer between [0,99999999], and redirect there
 
@@ -97,6 +120,6 @@ def redirect_path2num(junk):
 
 
 if __name__ == '__main__':
-    app.run(host='128.199.143.78', port=80, passthrough_errors=True)
+    app.run(host='128.199.143.78', port=1337, passthrough_errors=True)
 
 
