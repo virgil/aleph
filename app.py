@@ -11,6 +11,7 @@ regex_nummatch = re.compile( r'[^0-9]' )
 
 app = Flask(__name__)
 
+app.config['MAX_CONTENT_LENGTH'] = 4096
 
 @app.route('/')
 def landing():
