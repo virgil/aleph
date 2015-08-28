@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 4096
 
 @app.route('/')
+@cacheit
 def landing():
 
     try:
@@ -44,6 +45,15 @@ def dontcache(f):
 	return decorated_function
 
 
+def cacheit(f):
+	"""This decorator prepends Cache-Control header for caching for 3 days"""
+	@wraps(f)
+	@add_response_headers({'Cache-Control': 'max-age=%d' % (86400 * 3) })
+	def decorated_function(*args, **kwargs):
+		return f(*args, **kwargs)
+	return decorated_function
+
+
 @app.route('/rand')
 @app.route('/random')
 @dontcache
@@ -57,6 +67,7 @@ def redirect_random():
 
 
 @app.route('/<int:num>')
+@cacheit
 def page(num):
     # show the post with the given id, the id is an integer
     
@@ -64,13 +75,18 @@ def page(num):
 
 	# if no dblines, try 
 	if not lines:
-		lines = get_lines_from_wolfram(num)
 
-		# we got some lines, awesome.
-		if lines:
-			write_lines_to_db(num,lines)
-		else:
-			lines = [ ('' ,"We don't know anything about %d yet!  We will soon!" % num ) ]
+		try:
+			lines = get_lines_from_wolfram(num)
+
+			# we got some lines, awesome.
+			if lines:
+				write_lines_to_db(num,lines)
+			else:
+				lines = [ ('' ,"We don't know anything about %d yet!  We will soon!" % num ) ]
+
+		except ValueError, e:
+			lines = [ ('' ,"Backend Error: %s" % e ) ]
 
 
 	return render_template( "numpage.html", num=int(num), paragraph=lines, h=h(num) )
@@ -81,6 +97,7 @@ def page(num):
 #########################################################################################################
 ## This is for doing redirection for unknown paths
 @app.route('/<float:num>')
+@cacheit
 def redirect_float2num(num):
 	# redirect to the integer page
 	return redirect( url_for('page', num=int(round(num))), 301 )
@@ -88,11 +105,13 @@ def redirect_float2num(num):
 
 
 @app.route('/db/<path:filename>')
+@cacheit
 def db_static(filename):
     return send_from_directory(app.root_path + '/db/', filename)
 
 
 @app.route('/<path:junk>')
+@cacheit
 def redirect_path2num(junk):
 
 	z = ''

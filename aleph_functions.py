@@ -74,12 +74,9 @@ def get_lines_from_wolfram( num ):
 	# make the connection to the backend    
 	app_id = 'E7W676-QR2UE4PUR4'
 	client = wolframalpha.Client(app_id)
-	
-	try:
-		res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
 
-		#res = client.query( str(num), params )
-		lines = [ ]
+	try:	
+		res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
 
 		the_pods = [ pod for pod in res.pods ]
 
@@ -98,8 +95,11 @@ def get_lines_from_wolfram( num ):
 						lines.append( ('', the_math) )
 
 					elif 'img' in spod.children:
-						#lines.append( ('', 'adding stuff to dict' ) )
-						#lines.append( ((''), 'dict=%s' % s.children['img']) )
+						img_node_title = (spod.children['img'])['title']
+
+						# skip the "is an (odd|even) number."
+						if img_node_title.endswith('is an odd number.') or img_node_title.endswith('is an even number'):
+							continue
 
 						local_img = wolframdict2localdict( spod.children['img'], num )
 
@@ -132,8 +132,14 @@ def get_lines_from_wolfram( num ):
 						lines.append( ("Prime factors: ", s.text) )
 
 	# there was some error getting information from wolfram alpha
-	except:
-		pass
+	except Exception, e:
+		
+		if 'Account blocked' in e[0] or "Error 10" in e[0]:
+			raise ValueError, "Error 10"
+		
+		# propogate the exception upwards
+		raise e
+	
 
 	if num == 1:
 		lines.append( ('',"1 is NOT prime.  Nor is it composite.") )
