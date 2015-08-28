@@ -2,6 +2,8 @@ from flask import Flask, redirect, url_for, render_template, send_from_directory
 import re, random
 from aleph_functions import *
 from functools import wraps
+from os.path import isfile
+from sys import exit
 
 regex_mathmatch = re.compile( r'^[0-9\+\-*\\\^)(\ ]*$' )
 regex_nummatch = re.compile( r'[^0-9]' )
@@ -11,18 +13,15 @@ regex_nummatch = re.compile( r'[^0-9]' )
 
 app = Flask(__name__)
 
+######################################################################
 app.config['MAX_CONTENT_LENGTH'] = 4096
+HOST_IP = '128.199.143.78'
+HTTP_PORT = 1337
+DAYS_TO_CACHE = 4
 
-@app.route('/')
-@cacheit
-def landing():
-
-    try:
-        return render_template("index.html")
-    except Exception, e:
-        return str(e)
-
-
+# can set this here or in file 'wolfram.apikey'
+WOLFRAM_APIKEY = None
+######################################################################
 def add_response_headers(headers={}):
 	"""This decorator adds the headers passed in to the response"""
 	def decorator(f):
@@ -48,10 +47,20 @@ def dontcache(f):
 def cacheit(f):
 	"""This decorator prepends Cache-Control header for caching for 3 days"""
 	@wraps(f)
-	@add_response_headers({'Cache-Control': 'max-age=%d' % (86400 * 3) })
+	@add_response_headers({'Cache-Control': 'max-age=%d' % (86400 * DAYS_TO_CACHE) })
 	def decorated_function(*args, **kwargs):
 		return f(*args, **kwargs)
 	return decorated_function
+
+
+@app.route('/')
+@cacheit
+def landing():
+
+    try:
+        return render_template("index.html")
+    except Exception, e:
+        return str(e)
 
 
 @app.route('/rand')
@@ -75,15 +84,20 @@ def page(num):
 
 	# if no dblines, try 
 	if not lines:
+		lines = []
+		#lines.append( ('', 'getting from wolfram...' ) )
 
 		try:
-			lines = get_lines_from_wolfram(num)
+			#lines.append( ('', 'oh hai!') )
+			lines = get_lines_from_wolfram(num, WOLFRAM_APIKEY)
 
+			
 			# we got some lines, awesome.
 			if lines:
 				write_lines_to_db(num,lines)
 			else:
 				lines = [ ('' ,"We don't know anything about %d yet!  We will soon!" % num ) ]
+			
 
 		except ValueError, e:
 			lines = [ ('' ,"Backend Error: %s" % e ) ]
@@ -139,6 +153,25 @@ def redirect_path2num(junk):
 
 
 if __name__ == '__main__':
-    app.run(host='128.199.143.78', port=1337, passthrough_errors=True)
+
+	# uead the APIKEY from wolfram.apikey
+	if WOLFRAM_APIKEY is None:
+
+		if not isfile('wolfram.apikey'):
+			print("You must specify the key in file wolfram.apikey or specify the WOLFRAM_APIKEY in app.py")
+			exit(1)
+
+		assert isfile('wolfram.apikey') 
+
+		with open('wolfram.apikey','r') as f:
+			WOLFRAM_APIKEY = f.read().strip()
+
+
+	if not WOLFRAM_APIKEY:
+		print "Wolfram API key was empty.  Cannot start."
+		exit(1)
+
+	print("Running with wolfram key='%s'" % WOLFRAM_APIKEY )
+	app.run(host=HOST_IP, port=HTTP_PORT, passthrough_errors=True)
 
 

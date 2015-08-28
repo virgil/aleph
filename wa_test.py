@@ -1,11 +1,13 @@
 import wolframalpha, sys
+from pprint import pprint
 
-app_id = 'E7W676-QR2UE4PUR4'
+app_id = 'E7W676-55P6J8Q4UL'
 client = wolframalpha.Client(app_id)
 num = 5
 
 try:
-	res = client.query( str(num), scanner='Integer', format='mathml', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
+	#res = client.query( str(num), scanner='Integer', format='mathml', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
+	res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
 
 except Exception, e:
 
@@ -28,16 +30,35 @@ prop_pods = [ x for x in the_pods if x.id == 'Property' ]
 assert len(prop_pods) == 1
 
 prop_pod = prop_pods[0]
+lines = []
+
+def img2html( imgdict ):
+	'''returns the HTML for displaying an image dictionary'''
+	z = '<img src="%(src)s" alt="%(alt)s" title="%(title)s" height="%(height)s" width="%(width)s"/>' % imgdict
+	return z
+
 
 for spod in prop_pod:
 
-	if 'mathml' in spod.children:
-		print( "Found mathml in spod.children!" )
-		
-		the_math = spod.flatten('mathml/')
-		#the_math = spod.flatten('/mathml/math/node()')
+	for spod in pod:
 
-		the_math = the_math.replace('<mtext>','<mspace/><mtext>')
-		the_math = the_math.replace('</mtext>','</mtext><mspace/>')
+		if 'img' in spod.children:
+			img_node_title = (spod.children['img'])['title']
 
-		print( "the_math=%s" % the_math )
+			# skip the "is an (odd|even) number."
+			if img_node_title.endswith('is an odd number.') or img_node_title.endswith('is an even number'):
+				continue
+
+			local_img = spod.children['img']
+
+			#lines.append( ((''), 'dict=%s' % local_img) )					
+
+			# this might come back False					
+			if local_img:
+				lines.append( ('', img2html(local_img) ) )
+
+		elif 'plaintext' in spod.children:
+			lines.append( ('', spod.text) )	
+
+pprint( lines )
+

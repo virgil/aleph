@@ -68,11 +68,14 @@ def write_lines_to_db( num, lines ):
 
 	
 
-def get_lines_from_wolfram( num ):
+def get_lines_from_wolfram( num, app_id ):
 	'''get all of the lines about num from wolframalpha'''
 
-	# make the connection to the backend    
-	app_id = 'E7W676-QR2UE4PUR4'
+	lines = []
+
+	#lines.append( ('wolfram id:', app_id) )
+
+	# make the connection to the backend
 	client = wolframalpha.Client(app_id)
 
 	try:	
@@ -98,7 +101,7 @@ def get_lines_from_wolfram( num ):
 						img_node_title = (spod.children['img'])['title']
 
 						# skip the "is an (odd|even) number."
-						if img_node_title.endswith('is an odd number.') or img_node_title.endswith('is an even number'):
+						if img_node_title.endswith('is an odd number.') or img_node_title.endswith('is an even number.'):
 							continue
 
 						local_img = wolframdict2localdict( spod.children['img'], num )
