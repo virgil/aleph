@@ -53,6 +53,7 @@ def cacheit(f):
 	return decorated_function
 
 
+
 @app.route('/')
 @cacheit
 def landing():
@@ -67,10 +68,15 @@ def landing():
 @app.route('/random')
 @dontcache
 def redirect_random():
+
+	@after_this_request
+		def add_header(response):
+			response.headers['Location'] = 'http://some-thing.onion/555'
+			return response	
 	# pick a random integer between [0,99999999], and redirect there
 
 	the_int = random.randint(0,999999999)
-	return redirect( url_for('page', num=the_int), 302 )
+	return redirect( "/%s" % (the_int), 302 )
 
 
 
