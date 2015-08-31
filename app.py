@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 ######################################################################
 app.config['MAX_CONTENT_LENGTH'] = 4096
-HOST_IP = '128.199.143.78'
+HOST_IP = '0.0.0.0'
 HTTP_PORT = 1337
 DAYS_TO_CACHE = 4
 
