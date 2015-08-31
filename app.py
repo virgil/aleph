@@ -38,7 +38,7 @@ def add_response_headers(headers={}):
 def dontcache(f):
 	"""This decorator prepends Cache-Control: private"""
 	@wraps(f)
-	@add_response_headers({'Cache-Control': 'private'})
+	@add_response_headers({'Cache-Control': 'private', 'X-testurl': 'http://7g5v3hvx5x2zkoqe.onion/555'} )
 	def decorated_function(*args, **kwargs):
 		return f(*args, **kwargs)
 	return decorated_function
@@ -68,12 +68,6 @@ def landing():
 @app.route('/random')
 @dontcache
 def redirect_random():
-
-#	@after_this_request
-#		def add_header(response):
-#			response.headers['Location'] = 'http://some-thing.onion/555'
-#			return response	
-	# pick a random integer between [0,99999999], and redirect there
 
 	the_int = random.randint(0,999999999)
 	return redirect( "/%s" % (the_int), 302 )
