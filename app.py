@@ -69,10 +69,10 @@ def landing():
 @dontcache
 def redirect_random():
 
-	@after_this_request
-		def add_header(response):
-			response.headers['Location'] = 'http://some-thing.onion/555'
-			return response	
+#	@after_this_request
+#		def add_header(response):
+#			response.headers['Location'] = 'http://some-thing.onion/555'
+#			return response	
 	# pick a random integer between [0,99999999], and redirect there
 
 	the_int = random.randint(0,999999999)
