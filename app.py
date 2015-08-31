@@ -1,9 +1,10 @@
-from flask import Flask, redirect, url_for, render_template, send_from_directory, make_response
+from flask import Flask, redirect, url_for, render_template, send_from_directory, make_response, request
 import re, random
 from aleph_functions import *
 from functools import wraps
 from os.path import isfile
 from sys import exit
+import copy
 
 regex_mathmatch = re.compile( r'^[0-9\+\-*\\\^)(\ ]*$' )
 regex_nummatch = re.compile( r'[^0-9]' )
@@ -35,10 +36,25 @@ def add_response_headers(headers={}):
 		return decorated_function
 	return decorator
 
+
+def show_req_headers(f):
+	"""This decorator prepends the HTTP request headers"""
+	@wraps(f)
+
+	new_headers = {}
+	for key, value in request.headers.items():
+		new_key = "x-req-%s" % key
+		new_headers[new_key] = value
+	@add_response_headers( new_headers )
+	def decorated_function(*args, **kwargs):
+		return f(*args, **kwargs)
+	return decorated_function
+
+
 def dontcache(f):
 	"""This decorator prepends Cache-Control: private"""
 	@wraps(f)
-	@add_response_headers({'Cache-Control': 'private', 'X-testurl': 'http://7g5v3hvx5x2zkoqe.onion/555'} )
+	@add_response_headers({'Cache-Control': 'private', 'X-testurl': 'http://7g5v3hvx5x2zkoqe.onion/555' } )
 	def decorated_function(*args, **kwargs):
 		return f(*args, **kwargs)
 	return decorated_function
@@ -67,6 +83,7 @@ def landing():
 @app.route('/rand')
 @app.route('/random')
 @dontcache
+@show_req_headers
 def redirect_random():
 
 	the_int = random.randint(0,999999999)
