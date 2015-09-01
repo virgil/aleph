@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, render_template, send_from_directory, make_response, request
+from flask import Flask, redirect, url_for, render_template, send_from_directory, make_response
+from flask import request
 import re, random
 from aleph_functions import *
 from functools import wraps
@@ -37,19 +38,6 @@ def add_response_headers(headers={}):
 	return decorator
 
 
-def show_req_headers(f):
-	"""This decorator prepends the HTTP request headers"""
-	@wraps(f)
-
-	new_headers = {}
-	for key, value in request.headers.items():
-		new_key = "x-req-%s" % key
-		new_headers[new_key] = value
-	@add_response_headers( new_headers )
-	def decorated_function(*args, **kwargs):
-		return f(*args, **kwargs)
-	return decorated_function
-
 
 def dontcache(f):
 	"""This decorator prepends Cache-Control: private"""
@@ -80,14 +68,29 @@ def landing():
         return str(e)
 
 
+@app.route('/test')
+@dontcache
+def print_diags():
+	'''print various diagnostic information'''
+	reqheaders = [ (x,y) for x,y in request.headers.items() ]
+
+	# get a random int for the redirect response
+	rand_response = make_response( redirect_random() )
+
+	respheaders = [ (x,y) for x,y in rand_response.headers.items() ]
+	
+	return render_template( "diag.html", reqheaders=reqheaders, respheaders=respheaders )
+
 @app.route('/rand')
 @app.route('/random')
 @dontcache
-@show_req_headers
 def redirect_random():
 
+	#the_http_host = request.headers['Host']
+
 	the_int = random.randint(0,999999999)
-	return redirect( "/%s" % (the_int), 302 )
+	#return redirect( "http://%s/%s" % (the_http_host,the_int), 302 )
+	return redirect( url_for('page', num=the_int), 302 )
 
 
 
