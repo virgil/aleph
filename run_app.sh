@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-	cd /root/helloflask/
+	cd /root/aleph
 	source venv/bin/activate
 	python app.py
 	echo "Sleeping for 10sec..."
