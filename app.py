@@ -18,7 +18,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 4096
 HOST_IP = '0.0.0.0'
 HTTP_PORT = 1337
-DAYS_TO_CACHE = 4
+DAYS_TO_CACHE = 20
 
 # can set this here or in file 'wolfram.apikey'
 WOLFRAM_APIKEY = None
@@ -37,31 +37,18 @@ def add_response_headers(headers={}):
 	return decorator
 
 
-def show_req_headers(f):
-	"""This decorator prepends the HTTP request headers"""
-	@wraps(f)
-
-	new_headers = {}
-	for key, value in request.headers.items():
-		new_key = "x-req-%s" % key
-		new_headers[new_key] = value
-	@add_response_headers( new_headers )
-	def decorated_function(*args, **kwargs):
-		return f(*args, **kwargs)
-	return decorated_function
-
-
 def dontcache(f):
 	"""This decorator prepends Cache-Control: private"""
 	@wraps(f)
-	@add_response_headers({'Cache-Control': 'private', 'X-testurl': 'http://7g5v3hvx5x2zkoqe.onion/555' } )
+	@add_response_headers({'Cache-Control': 'private, no-cache, no-store, must-revalidate' } )
+
 	def decorated_function(*args, **kwargs):
 		return f(*args, **kwargs)
 	return decorated_function
 
 
 def cacheit(f):
-	"""This decorator prepends Cache-Control header for caching for 3 days"""
+	"""This decorator prepends Cache-Control header for caching for DAYS_TO_CACHE days"""
 	@wraps(f)
 	@add_response_headers({'Cache-Control': 'max-age=%d' % (86400 * DAYS_TO_CACHE) })
 	def decorated_function(*args, **kwargs):
