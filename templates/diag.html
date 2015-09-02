@@ -1,0 +1,34 @@
+<html>
+<head>
+	<link href="/static/css/bootstrap.css" rel="stylesheet">
+	<title>&alefsym;₀ :: header diagnostics</title>
+
+</head>
+
+<body class="body">
+<div class="page-header"><h3 id="navbar"><b><a href="/" style="text-decoration: none; color: black;">Aleph naught :: Essential ℕatural ℕumber Facts</a></b></h3></div>
+
+    
+        <div style="margin-left: 200px; display: block;">
+        <h1>Request headers</h1>
+        <table>
+        	   {% for h in reqheaders %}
+	                   <tr><td>{{ h[0] }}</td><td>{{ h[1] }} </tr>
+	           {% endfor %}
+        </table>
+
+
+        <h1>Response headers</h1>
+        <table>
+               {% for h in respheaders %}
+                       <tr><td>{{ h[0] }}</td><td>{{ h[1] }} </tr>
+               {% endfor %}
+        </table>
+
+        </div>
+</body>
+
+</html>
+
+            
+            
