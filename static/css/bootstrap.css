@@ -26,9 +26,14 @@ ul.fact {
 /*	display: table; */
 }
 
-li.bullet {
-	font-size: larger;
-	font-weight: bolder;
+a.bullet {
+	font-size: 20pt;
+}
+
+/* properties for the <<, <, >>, and >> images */
+img.arrowimg {
+	width: 20px;
+	height: 20px;
 }
 
 li.fact {
