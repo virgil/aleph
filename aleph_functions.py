@@ -66,6 +66,7 @@ def write_lines_to_db( num, lines ):
 	with open(fname,'w') as f:
 		json.dump(lines, f, sort_keys=True)
 
+	return dname
 	
 
 def get_lines_from_wolfram( num, app_id ):

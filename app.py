@@ -101,6 +101,7 @@ def page(num):
     # show the post with the given id, the id is an integer
     
 	lines = get_lines_from_db(num)
+	cachedir = None
 
 	# if no dblines, try 
 	if not lines:
@@ -114,7 +115,7 @@ def page(num):
 			
 			# we got some lines, awesome.
 			if lines:
-				write_lines_to_db(num,lines)
+				cachedir = write_lines_to_db(num,lines)
 			else:
 				lines = [ ('' ,"We don't know anything about %d yet!  We will soon!" % num ) ]
 			
@@ -123,7 +124,7 @@ def page(num):
 			lines = [ ('' ,"Backend Error: %s" % e ) ]
 
 
-	return render_template( "numpage.html", num=int(num), paragraph=lines, h=h(num) )
+	return render_template( "numpage.html", num=int(num), paragraph=lines, h=h(num), cachedir=cachedir )
 
 
 #########################################################################################################
