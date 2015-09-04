@@ -73,11 +73,13 @@ def get_lines_from_wolfram( num, app_id ):
 
 	lines = []
 
-	#lines.append( ('wolfram id:', app_id) )
+	lines.append( ('wolfram id:', app_id) )
 
 	# make the connection to the backend
 	client = wolframalpha.Client(app_id)
 
+	return lines
+	
 	try:	
 		res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
 
