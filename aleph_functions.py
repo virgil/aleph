@@ -75,7 +75,7 @@ def get_lines_from_wolfram( num, app_id ):
 
 	lines = []
 
-	lines.append( ('wolfram id:', app_id) )
+	#lines.append( ('wolfram id:', app_id) )
 
 	if not app_id:
 		lines.append( ('', 'Must specify an app_id.  app_id=%s' % app_id  ) )
