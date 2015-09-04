@@ -24,12 +24,12 @@ body {
 
 
 img.bullet {
-	height: 20px;
+	height: 25px;
 }
 
 /* properties for the <<, <, >>, and >> images */
 img.arrowimg {
-	height: 20px;
+	height: 25px;
 }
 
 li.fact {
