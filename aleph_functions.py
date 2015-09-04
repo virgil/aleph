@@ -83,8 +83,6 @@ def get_lines_from_wolfram( num, app_id ):
 	# make the connection to the backend
 	client = wolframalpha.Client(app_id)
 
-	return lines
-
 	try:	
 		res = client.query( str(num), scanner='Integer', assumption='*C.1337-_*NonNegativeDecimalInteger-' )
 
@@ -122,7 +120,7 @@ def get_lines_from_wolfram( num, app_id ):
 					elif 'plaintext' in spod.children:
 						lines.append( ('', spod.text) )
 
-			'''
+
 			elif pod.id == 'PrimeFactorization':
 				for spod in pod:
 
@@ -148,7 +146,7 @@ def get_lines_from_wolfram( num, app_id ):
 
 					elif 'plaintext' in spod.children:
 						lines.append( ("Prime factors: ", spod.text) )
-			'''
+
 	# there was some error getting information from wolfram alpha
 	except Exception, e:
 		
