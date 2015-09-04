@@ -43,13 +43,13 @@ def get_lines_from_db(num):
 
 	# if the directory doesn't exist, make it
 	if not os.path.isfile( fname ):
-		return None
+		return None, dname
 
 
 	with open(fname, 'r') as f:
-		return json.load(f)
+		return json.load(f), dname
 
-	return None
+	return None, dname
 
 
 def write_lines_to_db( num, lines ):

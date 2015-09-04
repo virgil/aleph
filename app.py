@@ -100,8 +100,7 @@ def redirect_random():
 def page(num):
     # show the post with the given id, the id is an integer
     
-	lines = get_lines_from_db(num)
-	cachedir = None
+	lines, cachedir = get_lines_from_db(num)
 
 	# if no dblines, try 
 	if not lines:
@@ -115,7 +114,7 @@ def page(num):
 			
 			# we got some lines, awesome.
 			if lines:
-				cachedir = write_lines_to_db(num,lines)
+				write_lines_to_db(num,lines)
 			else:
 				lines = [ ('' ,"We don't know anything about %d yet!  We will soon!" % num ) ]
 			
