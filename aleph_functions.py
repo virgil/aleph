@@ -117,14 +117,14 @@ def get_lines_from_wolfram( num, app_id ):
 
 
 			elif pod.id == 'PrimeFactorization':
-				for s in pod:
+				for spod in pod:
 
-					if 'mathml' in s.children:
+					if 'mathml' in spod.children:
 						lines.append( ('', "Found mathml!") )
 						the_math = spod.flatten('mathml/')
 						lines.append( ('', the_math) )
 
-					elif 'img' in s.children:
+					elif 'img' in spod.children:
 						img_node_title = (spod.children['img'])['title']
 
 						# if this is a prime number, just add the raw text
@@ -133,14 +133,14 @@ def get_lines_from_wolfram( num, app_id ):
 
 						# print the image
 						else:
-							local_img = wolframdict2localdict( s.children['img'], num )
+							local_img = wolframdict2localdict( spod.children['img'], num )
 
 							# this might come back False
 							if local_img:
 								lines.append( ("Prime factors: ", img2html(local_img)) )
 
-					elif 'plaintext' in s.children:
-						lines.append( ("Prime factors: ", s.text) )
+					elif 'plaintext' in spod.children:
+						lines.append( ("Prime factors: ", spod.text) )
 
 	# there was some error getting information from wolfram alpha
 	except Exception, e:
