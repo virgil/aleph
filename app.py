@@ -175,6 +175,7 @@ def redirect_path2num(junk):
 
 def set_wolfram_key():
 
+	global WOLFRAM_APIKEY
 	# uead the APIKEY from wolfram.apikey
 	if WOLFRAM_APIKEY is None:
 
@@ -188,6 +189,8 @@ def set_wolfram_key():
 			WOLFRAM_APIKEY = f.read().strip()
 
 	assert WOLFRAM_APIKEY, "Unable to set Wolfram API key"
+
+	return WOLFRAM_APIKEY
 
 
 if __name__ == '__main__':
