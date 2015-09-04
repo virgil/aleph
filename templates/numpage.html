@@ -26,20 +26,20 @@
               <ul class="pagination pagination-lg">
 
         {% if num < 10 %}
-                <li class="disabled"><a href="/">⬤</a></li>
+                <li class="disabled bullet"><a href="/">&bull;</a></li>
         {% else %}
-                <li><a href="/{{num-10}}">⟸ —10</a></li>        
+                <li><a href="/{{num-10}}"><img src="/arrow-lefter.png" alt="<<"/> &ndash;10</a></li>        
         {% endif %}
 
         {% if num == 0 %}
-                <li class="disabled"><a href="/">⬤</a></li>
+                <li class="disabled bullet"><a href="/">&bull;</a></li>
         {% else %}
-                <li><a href="/{{num-1}}">⟵ &ndash;1</a></li>
+                <li><a href="/{{num-1}}"><img src="/arrow-left.png" alt="<"/> &ndash;1</a></li>
         {% endif %}
 
                 <li><a href="/random">⇜?⇝</a></li>
-                <li><a href="/{{num+1}}">+1 ⟶</a></li>
-                <li><a href="/{{num+10}}">+10 ⟹</a></li>
+                <li><a href="/{{num+1}}">+1 <img src="/arrow-right.png" alt=">"/></a></li>
+                <li><a href="/{{num+10}}">+10 <img src="/arrow-righter.png" alt=">>"/></a></li>
 
               </ul>
         </div>
