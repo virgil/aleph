@@ -24,13 +24,13 @@
               <ul class="pagination pagination-lg">
 
         {% if num < 10 %}
-                <li class="disabled"><a href="/"><img class="bullet" src="/static/moon.png" alt="*"/></a></li>
+                <li class="disabled"><a href="/"><img class="bullet" src="/static/moon.png" alt="&bull;"/></a></li>
         {% else %}
                 <li><a href="/{{num-10}}"><img class="arrowimg" src="/static/arrow-lefter.png" alt="&lt;&lt;"/> &ndash;10</a></li>        
         {% endif %}
 
         {% if num == 0 %}
-                <li class="disabled"><a href="/"><img class="bullet" src="/static/moon.png" alt="*"/></a></li>
+                <li class="disabled"><a href="/"><img class="bullet" src="/static/moon.png" alt="&bull;"/></a></li>
         {% else %}
                 <li><a href="/{{num-1}}"><img class="arrowimg" src="/static/arrow-left.png" alt="&lt;"/> &ndash;1</a></li>
         {% endif %}
