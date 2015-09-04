@@ -28,18 +28,18 @@
         {% if num < 10 %}
                 <li class="disabled bullet"><a href="/">&bull;</a></li>
         {% else %}
-                <li><a href="/{{num-10}}"><img src="/static/arrow-lefter.png" alt="<<"/> &ndash;10</a></li>        
+                <li><a href="/{{num-10}}"><img src="/static/arrow-lefter.png" alt="&lt;&lt;"/> &ndash;10</a></li>        
         {% endif %}
 
         {% if num == 0 %}
                 <li class="disabled bullet"><a href="/">&bull;</a></li>
         {% else %}
-                <li><a href="/{{num-1}}"><img src="/static/arrow-left.png" alt="<"/> &ndash;1</a></li>
+                <li><a href="/{{num-1}}"><img src="/static/arrow-left.png" alt="&lt;"/> &ndash;1</a></li>
         {% endif %}
 
                 <li><a href="/random">⇜?⇝</a></li>
-                <li><a href="/{{num+1}}">+1 <img src="/static/arrow-right.png" alt=">"/></a></li>
-                <li><a href="/{{num+10}}">+10 <img src="/static/arrow-righter.png" alt=">>"/></a></li>
+                <li><a href="/{{num+1}}">+1 <img src="/static/arrow-right.png" alt="&gt;"/></a></li>
+                <li><a href="/{{num+10}}">+10 <img src="/static/arrow-righter.png" alt="&gt;&gt;"/></a></li>
 
               </ul>
         </div>
