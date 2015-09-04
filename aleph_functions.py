@@ -125,11 +125,19 @@ def get_lines_from_wolfram( num, app_id ):
 						lines.append( ('', the_math) )
 
 					elif 'img' in s.children:
-						local_img = wolframdict2localdict( s.children['img'], num )
+						img_node_title = (spod.children['img'])['title']
 
-						# this might come back False
-						if local_img:
-							lines.append( ("Prime factors: ", img2html(local_img)) )
+						# if this is a prime number, just add the raw text
+						if 'is a prime number' in img_node_title:
+							lines.append( ('', "%s is a prime number." % num) )
+
+						# print the image
+						else:
+							local_img = wolframdict2localdict( s.children['img'], num )
+
+							# this might come back False
+							if local_img:
+								lines.append( ("Prime factors: ", img2html(local_img)) )
 
 					elif 'plaintext' in s.children:
 						lines.append( ("Prime factors: ", s.text) )
