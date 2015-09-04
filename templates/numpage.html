@@ -11,9 +11,7 @@
 
     
 	<h1 id="huge">{{ num }}</h1>
-        <div style="margin-left: 200px; display: block;">        
-                
-
+        <div style="display: block;">
                 <ul class="fact">
         	   {% for p in paragraph %}
 	                   <li class="fact">{{ p[0] }}<span class="helper"> </span>{{ p[1] | safe }}</li>

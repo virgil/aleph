@@ -22,12 +22,10 @@ body {
     width: 60%;
 }
 
-ul.fact {
-/*	display: table; */
-}
 
 a.bullet {
-	font-size: 20pt;
+	height: 20px;
+	width: 20px;
 }
 
 /* properties for the <<, <, >>, and >> images */
