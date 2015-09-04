@@ -110,6 +110,7 @@ def page(num):
 
 		try:
 			#lines.append( ('', 'oh hai!') )
+			set_wolfram_key()
 			lines = get_lines_from_wolfram(num, WOLFRAM_APIKEY)
 
 			
@@ -191,10 +192,6 @@ def set_wolfram_key():
 
 if __name__ == '__main__':
 
-	set_wolfram_key()
-
 	print("Running with wolfram key='%s'" % WOLFRAM_APIKEY )
 	app.run(host=HOST_IP, port=HTTP_PORT, passthrough_errors=True)
 
-
-set_wolfram_key()
