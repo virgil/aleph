@@ -23,14 +23,12 @@ body {
 }
 
 
-a.bullet {
+img.bullet {
 	height: 20px;
-	width: 20px;
 }
 
 /* properties for the <<, <, >>, and >> images */
 img.arrowimg {
-	width: 20px;
 	height: 20px;
 }
 
