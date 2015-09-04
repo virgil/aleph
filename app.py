@@ -23,6 +23,7 @@ DAYS_TO_CACHE = 20
 
 # can set this here or in file 'wolfram.apikey'
 WOLFRAM_APIKEY = None
+
 ######################################################################
 def add_response_headers(headers={}):
 	"""This decorator adds the headers passed in to the response"""
@@ -171,8 +172,7 @@ def redirect_path2num(junk):
 	return redirect( url_for('landing'), 301 )
 
 
-
-if __name__ == '__main__':
+def set_wolfram_key():
 
 	# uead the APIKEY from wolfram.apikey
 	if WOLFRAM_APIKEY is None:
@@ -186,12 +186,15 @@ if __name__ == '__main__':
 		with open('wolfram.apikey','r') as f:
 			WOLFRAM_APIKEY = f.read().strip()
 
+	assert WOLFRAM_APIKEY, "Unable to set Wolfram API key"
 
-	if not WOLFRAM_APIKEY:
-		print "Wolfram API key was empty.  Cannot start."
-		exit(1)
+
+if __name__ == '__main__':
+
+	set_wolfram_key()
 
 	print("Running with wolfram key='%s'" % WOLFRAM_APIKEY )
 	app.run(host=HOST_IP, port=HTTP_PORT, passthrough_errors=True)
 
 
+set_wolfram_key()
