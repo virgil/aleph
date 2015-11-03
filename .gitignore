@@ -60,3 +60,5 @@ target/
 
 # apikey
 wolfram.apikey
+
+.DS_Store
